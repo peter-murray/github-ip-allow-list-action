@@ -1,0 +1,30 @@
+---
+name: GitHub IP Allow List Action
+description: Loads the IP Allow List properties using the GitHub meta endpoints
+author: peter-murray
+
+branding:
+  icon: alert-circle
+  color: blue
+
+inputs:
+  github_token:
+    description: The GitHub token that can be used to update the allow list on the enterprise account
+    required: true
+
+  enterprise_slug:
+    description: The GitHub Enterprise account slug
+    requited: true
+
+  metadata_section:
+    description: The name of the section of CIDR IP Addresses from the GitHub meta API
+    required: true
+
+  active:
+    description: Whether or not the CIDR if not present should be active whrn added to the allow list
+    default: 'false'
+    required: false
+
+runs:
+  using: node12
+  main: dist/index.js
