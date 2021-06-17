@@ -9837,7 +9837,7 @@ module.exports.getEnterprise = async function(enterpriseSlug, octokit) {
     return enterprise;
 }
 
-module.exports = class Enterprise {
+class Enterprise {
 
     constructor(enterpriseSlug, octokit) {
         this._name = enterpriseSlug;
