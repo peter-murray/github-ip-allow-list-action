@@ -9827,6 +9827,7 @@ function wrappy (fn, cb) {
 /***/ 3471:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const core = __nccwpck_require__(2186)
 const Bottleneck = __nccwpck_require__(7356);
 const IPAllowListEntry = __nccwpck_require__(2980);
 

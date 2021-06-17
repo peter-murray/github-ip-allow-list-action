@@ -1,3 +1,4 @@
+const core = require('@actions/core')
 const Bottleneck = require('bottleneck');
 const IPAllowListEntry = require('./ipAllowListEntry');
 
