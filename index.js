@@ -47,7 +47,7 @@ async function run() {
 run();
 
 async function addCidrsToEnterprise(enterprise, cidrs, isActive, label) {
-  core.startGroup('Building IP Allow List Entries: ${label}');
+  core.startGroup(`Building IP Allow List Entries: ${label}`);
   await enterprise.addAllowListCIDRs(label, cidrs, isActive);
   core.endGroup();
 }
