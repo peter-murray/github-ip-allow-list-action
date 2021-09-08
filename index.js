@@ -48,7 +48,7 @@ run();
 
 async function addCidrsToEnterprise(enterprise, cidrs, isActive, label) {
   core.startGroup('Building IP Allow List Entries: ${label}');
-  await targetEnterprise.addAllowListCIDRs(label, cidrs, isActive);
+  await enterprise.addAllowListCIDRs(label, cidrs, isActive);
   core.endGroup();
 }
 
