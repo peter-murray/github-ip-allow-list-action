@@ -36,4 +36,21 @@ jobs:
             192.168.12.0/24,
           
           custom_cidrs_label: 'Testing Custom CIDRs'
+
+      - name: Update IP Allow List - default label
+        uses: ./
+        with:
+          github_token: ${{ github.event.inputs.token }}
+          enterprise_slug: ${{ github.event.inputs.enterprise }}
+          custom_cidrs: |
+            192.168.13.0/24,
+
+
+      - name: Update IP Allow List including meta
+        uses: ./
+        with:
+          github_token: ${{ github.event.inputs.token }}
+          enterprise_slug: ${{ github.event.inputs.enterprise }}
+          custom_cidrs: 192.168.100.0/24
+          metadata_section: hooks
   

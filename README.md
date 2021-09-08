@@ -22,9 +22,16 @@ API retry and rate throttling along with a secondary queue is implemented to con
 
 * `enterprise_slug`: The slug for the enterprise account to be modified. `Required`
 
-* `metadata_section`: The CIDRs in the meta endpoint to be added to the allow list, e.g. `actions` or `hooks`. Check the [meta API](https://api.github.com/meta) for the names of the various services. `Required`
+* `metadata_section`: The CIDRs in the meta endpoint to be added to the allow list, e.g. `actions` or `hooks`. Check the [meta API](https://api.github.com/meta) for the names of the various services.
+
+* `custom_cidrs`: A list of custom CIDRs `,` separated that you wish to add, e.g. `192.168.2.0/24, 192.168.3.0/24`
+
+* `custom_cidrs_label`: A custom label to apply to the custom CIDRs when you add them as IP Allow List entries, defaults to `Custom CIDR from github-ip-allow-list-action`.
 
 * `active`: A boolean that will create the IP Allow List entries in an active state (`true`) or disabled (any other value than `true`). `Optional`
+
+**At least one of `custom_cidrs` or `metadata_section` must be specified, but you can also include both together.**
+
 
 ## Examples
 
@@ -37,5 +44,20 @@ The following invocation will add all the meta API CIDRs as separate IP Allow Li
     github_token: ${{ secrets.ENTERPRISE_ACCESS_PAT }}
     enterprise_slug: goodcorp
     metadata_section: actions
+    active: false
+```
+
+Adding some custom CIDRs to the allow list `192.168.2.0/24`, `192.168.3.0/24` and `10.0.1.0/24`
+
+```yml
+- name: Add Custom CIDRs to IP Allow List
+  uses: peter-murray/github-ip-allow-list-action@v1
+  with:
+    github_token: ${{ secrets.ENTERPRISE_ACCESS_PAT }}
+    enterprise_slug: goodcorp
+    custom_cidrs: |
+      192.168.2.0/24,
+      192.168.3.0/24,
+      10.0.1.0/24
     active: false
 ```
