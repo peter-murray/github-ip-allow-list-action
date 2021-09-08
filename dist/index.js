@@ -10315,7 +10315,7 @@ async function run() {
       const cidrs = await getMetaCIDRs(octokit, metadataSection);
       if (cidrs) {
         core.info(`GitHub meta CIDRs to add: ${JSON.stringify(cidrs)}`);
-        await addCidrsToEnterprise(enterprise, cidrs, isActive, `GitHub Meta CIDR for ${metadataSection}`);
+        await addCidrsToEnterprise(targetEnterprise, cidrs, isActive, `GitHub Meta CIDR for ${metadataSection}`);
       } else {
         throw new Error(`The metadata CIDRs for '${metadataSection}' were unable to be resolved.`);
       }
@@ -10324,7 +10324,7 @@ async function run() {
     if (customCidrs) {
       const cidrs = getCidrs(customCidrs);
       core.info(`Custom CIDRs to add: ${JSON.stringify(cidrs)}`);
-      await addCidrsToEnterprise(enterprise, cidrs, isActive, core.getInput('custom_cidrs_label'));
+      await addCidrsToEnterprise(targetEnterprise, cidrs, isActive, core.getInput('custom_cidrs_label'));
     }
   } catch (err) {
     core.setFailed(err);
