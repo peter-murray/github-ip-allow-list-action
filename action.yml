@@ -1,6 +1,6 @@
 ---
 name: GitHub IP Allow List Action
-description: Loads the IP Allow List properties using the GitHub meta endpoints
+description: Loads the IP Allow List properties using the GitHub meta endpoints and custom CIDR ranges
 author: peter-murray
 
 branding:
@@ -14,14 +14,23 @@ inputs:
 
   enterprise_slug:
     description: The GitHub Enterprise account slug
-    requited: true
+    required: true
 
   metadata_section:
     description: The name of the section of CIDR IP Addresses from the GitHub meta API
-    required: true
+    required: false
+
+  custom_cidrs_label:
+    description: The label to apply to the created IP Allow List entries for the custom_cidrs parameter.
+    default: 'Custom CIDR from github-ip-allow-list-action'
+    required: false
+
+  custom_cidrs:
+    description: Custom CIDRs to manually add to the allow list
+    required: false
 
   active:
-    description: Whether or not the CIDR if not present should be active whrn added to the allow list
+    description: Whether or not the CIDR if not present should be active when added to the allow list
     default: 'false'
     required: false
 

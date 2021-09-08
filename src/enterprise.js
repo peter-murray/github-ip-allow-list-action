@@ -125,7 +125,7 @@ class Enterprise {
 
         cidrs.forEach(cidr => {
             promises.push(this.addIpAllowList(name, cidr, isActive));
-        })
+        });
 
         return await Promise.all(promises);
     }

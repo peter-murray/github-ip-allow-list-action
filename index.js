@@ -1,44 +1,74 @@
 const core = require('@actions/core')
-    , enterprise = require('./src/enterprise')
-    , githubClient = require('./src/github')
-    ;
+  , enterprise = require('./src/enterprise')
+  , githubClient = require('./src/github')
+  ;
 
 function getRequiredInputValue(key) {
-    return core.getInput(key, { required: true });
+  return core.getInput(key, { required: true });
 }
 
 async function run() {
-    try {
-        const githubToken = getRequiredInputValue('github_token')
-            , metadataSection = getRequiredInputValue('metadata_section')
-            , enterpriseSlug = getRequiredInputValue('enterprise_slug')
-            , isActive = core.getInput('active') === 'true'
-            ;
+  try {
+    const githubToken = getRequiredInputValue('github_token')
+      , metadataSection = core.getInput('metadata_section')
+      , customCidrs = core.getInput('custom_cidrs')
+      , enterpriseSlug = getRequiredInputValue('enterprise_slug')
+      , isActive = core.getInput('active') === 'true'
+      ;
 
-        const octokit = githubClient.create(githubToken);
-        const targetEnterprise = await enterprise.getEnterprise(enterpriseSlug, octokit);
-        core.info(`Enterprise account: ${targetEnterprise.name} : ${targetEnterprise.url}`);
+    const octokit = githubClient.create(githubToken);
+    const targetEnterprise = await enterprise.getEnterprise(enterpriseSlug, octokit);
+    core.info(`Enterprise account: ${targetEnterprise.name} : ${targetEnterprise.url}`);
 
-        const cidrs = await getMetaCIDRs(octokit, metadataSection);
-        if (cidrs) {
-            core.info(`CIDRs to add: ${JSON.stringify(cidrs)}`);
-
-            core.startGroup('Building IP Allow List Entries');
-            await targetEnterprise.addAllowListCIDRs(`GitHub Meta CIDR for ${metadataSection}`, cidrs, isActive);
-            core.endGroup();
-        } else {
-            throw new Error(`The metadata CIDRs for '${metadataSection}' were unable to be resolved.`);
-        }
-    } catch (err) {
-        core.setFailed(err);
+    if (!metadataSection && !customCidrs) {
+      throw new Error('A set of custom CIDRS or GitHub meta CIDRs section must be specified.');
     }
+
+    if (metadataSection) {
+      const cidrs = await getMetaCIDRs(octokit, metadataSection);
+      if (cidrs) {
+        core.info(`GitHub meta CIDRs to add: ${JSON.stringify(cidrs)}`);
+        await addCidrsToEnterprise(enterprise, cidrs, isActive, `GitHub Meta CIDR for ${metadataSection}`);
+      } else {
+        throw new Error(`The metadata CIDRs for '${metadataSection}' were unable to be resolved.`);
+      }
+    }
+
+    if (customCidrs) {
+      const cidrs = getCidrs(customCidrs);
+      core.info(`Custom CIDRs to add: ${JSON.stringify(cidrs)}`);
+      await addCidrsToEnterprise(enterprise, cidrs, isActive, core.getInput('custom_cidrs_label'));
+    }
+  } catch (err) {
+    core.setFailed(err);
+  }
 }
 
 run();
 
-async function getMetaCIDRs(octokit, name) {
-    const results = await octokit.rest.meta.get();
-    core.info(`Loaded GitHub Meta API CIDRs`);
+async function addCidrsToEnterprise(enterprise, cidrs, isActive, label) {
+  core.startGroup('Building IP Allow List Entries: ${label}');
+  await targetEnterprise.addAllowListCIDRs(label, cidrs, isActive);
+  core.endGroup();
+}
 
-    return results.data[name];
+async function getMetaCIDRs(octokit, name) {
+  const results = await octokit.rest.meta.get();
+  core.info(`Loaded GitHub Meta API CIDRs`);
+
+  return results.data[name];
+}
+
+function getCidrs(value) {
+  const cidrs = value.split(',');
+
+  const result = [];
+  cidrs.forEach(cidr => {
+    const cleanCidr = cidr.trim();
+    if (cleanCidr.length > 0) {
+      result.push(cidr.trim());
+    }
+  });
+
+  return result;
 }
