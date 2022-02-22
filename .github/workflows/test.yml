@@ -35,7 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: github.event.inputs.action_branch
+          ref: ${{ github.event.inputs.action_branch }}
 
       - name: Update IP Allow List
         uses: ./
