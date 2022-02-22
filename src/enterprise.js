@@ -138,9 +138,9 @@ class Enterprise {
     if (matchedIndex > -1) {
       const existingAllowListEntry = existing[matchedIndex];
 
-      if (existingAllowListEntry.isActive !== isActive) {
+      if (existingAllowListEntry.isActive !== isActive || existingAllowListEntry.name !== name) {
         return await this._limiter.schedule(() => {
-          return updateIpAllowList(this.octokit, existingAllowListEntry.id, cidr, isActive);
+          return updateIpAllowList(this.octokit, existingAllowListEntry.id, cidr, name, isActive);
         });
       } else {
         return existingAllowListEntry;
@@ -153,14 +153,16 @@ class Enterprise {
   }
 }
 
-async function updateIpAllowList(octokit, id, cidr, isActive) {
+async function updateIpAllowList(octokit, id, name, cidr, isActive) {
+  core.info(`Updating existing allow list entry: ${cidr}; existing id: ${id}; description: ${name}; active: ${isActive}`);
   const ipAllowList = await octokit.graphql({
     query: `
-            mutation updateAllowList($id: String!, $cidr: String!, $isActive: Boolean!) {
+            mutation updateAllowList($id: String!, $name: String! $cidr: String!, $isActive: Boolean!) {
                 updateIpAllowListEntry(input: {
                     allowListValue: $cidr,
                     isActive: $isActive,
-                    ipAllowListEntryId: $id
+                    ipAllowListEntryId: $id,
+                    name: $name
                 }) {
                     clientMutationId
                     ipAllowListEntry {
@@ -178,13 +180,14 @@ async function updateIpAllowList(octokit, id, cidr, isActive) {
             `,
     id: id,
     cidr: cidr,
+    name: name,
     isActive: !!isActive
   });
   return new IPAllowListEntry(ipAllowList);
 }
 
 async function addIpAllowList(octokit, id, name, cidr, isActive) {
-  core.info(`Adding cidr: ${cidr}`);
+  core.info(`Adding allow list entry: ${cidr}; description: ${name}; active: ${isActive}`);
 
   const ipAllowList = await octokit.graphql({
     query: `
