@@ -1,0 +1,10 @@
+{
+  "dockerComposeFile": [
+    "docker-compose.yml"
+  ],
+  "service": "dev",
+  "extensions": [
+    "ms-azuretools.vscode-docker",
+  ],
+  "postCreateCommand": "npm ci"
+}
