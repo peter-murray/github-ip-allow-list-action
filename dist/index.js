@@ -12950,6 +12950,8 @@ class Enterprise {
 
   async getEnterpriseIpAllowListEntries() {
     if (!this._loaded) {
+      core.info(`Loading IP Allow List Entries for enterprise...`);
+
       const results = [];
       const queryParameters = {
         query: `
@@ -13014,6 +13016,7 @@ class Enterprise {
         metadata: enterpriseMetaData,
         ipAllowListEntries: results
       };
+      core.info(`  existing IP Allow List entries loaded.`);
     }
 
     return this._data.ipAllowListEntries;
