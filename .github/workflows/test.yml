@@ -7,35 +7,42 @@ on:
         description: Meta API Section
         default: hooks
         required: true
-        
+
       enterprise:
         description: GitHub Enterprise
         default: goodcorp
         required: true
-        
+
       token:
         description: GitHub token
         required: true
-  
+
+      action_branch:
+        description: Action branch
+        default: main
+        required: true
+
 jobs:
   update_allow_list:
     name: Update Enterprise IP Allow List
     runs-on: ubuntu-20.04
-    
+
     steps:
       - name: Mask Token
         run: |
           echo "::add-mask::${{ github.event.inputs.token }}"
-    
+
       - name: Checkout
         uses: actions/checkout@v2
-        
+        with:
+          ref: github.event.inputs.action_branch
+
       - name: Update IP Allow List
         uses: ./
         with:
           github_token: ${{ github.event.inputs.token }}
           enterprise_slug: ${{ github.event.inputs.enterprise }}
           metadata_section: ${{ github.event.inputs.section }}
-          
-        
-  
+
+
+
