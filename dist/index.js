@@ -13066,9 +13066,6 @@ async function addIpAllowList(octokit, id, name, cidr, isActive) {
                         updatedAt
                         isActive
                         name
-                        owner {
-                            __typename
-                        }
                     }
                 }
             }
