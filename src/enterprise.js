@@ -135,10 +135,15 @@ class Enterprise {
         const existingCIDRs = existing.map(value => value.cidr);
         const matchedIndex = existingCIDRs.indexOf(cidr);
 
+        const id = this.id;
+        if (!id) {
+            core.setFailed(`Enterprise id was not properly loaded from enterprise GraphQL query; ${JSON.stringify(this._data)}`);
+        }
+
         if (matchedIndex > -1) {
             return existing[matchedIndex];
         } else  {
-            return await this._limiter.schedule(() => addIpAllowList(this.octokit, this.id, name, cidr, isActive));
+            return await this._limiter.schedule(() => addIpAllowList(this.octokit, id, name, cidr, isActive));
         }
     }
 }
