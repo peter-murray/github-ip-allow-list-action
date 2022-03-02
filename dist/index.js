@@ -13042,7 +13042,13 @@ class Enterprise {
 }
 
 async function addIpAllowList(octokit, id, name, cidr, isActive) {
-    core.info(`Adding cidr: ${cidr}`);
+    core.startGroup(`Adding cidr: ${cidr}`);
+    core.info(`  parameters`);
+    core.info(`     owner:  ${id}`);
+    core.info(`     name:   ${name}`);
+    core.info(`     cidr:   ${cidr}`);
+    core.info(`     active: ${!!isActive}`);
+    core.endGroup();
 
     const ipAllowList = await octokit.graphql({
         query: `
