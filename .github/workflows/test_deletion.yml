@@ -13,17 +13,17 @@ jobs:
   test_delete:
     name: Test Deletion
     
-    runs-on: ubunut:20.04
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Checkout action
-        uses: actions.checkout@v3
+        uses: actions/checkout@v3
         with:
           ref: update-changes
           path: github-ip-allow-list-action
           
       - name: Delete an allow list
-        uses: "./github-ip-allow-list-action/delete-allow-lists"
+        uses: ./github-ip-allow-list-action/delete-allow-lists
         with:
           github_token: ${{ secrets.goodcorp_enterprise_admin_token }}
           enterprise_slug: goodcorp
