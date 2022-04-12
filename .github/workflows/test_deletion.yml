@@ -1,0 +1,31 @@
+name: Test Delete
+
+on:
+  workflow_dispatch:
+    inputs:
+      match_cidr:
+        required: false
+        
+      match_description:
+        required: false
+  
+jobs:
+  test_delete:
+    name: Test Deletion
+    
+    runs-on: ubunut:20.04
+    
+    steps:
+      - name: Checkout action
+        uses: actions.checkout@v3
+        with:
+          ref: update-changes
+          path: github-ip-allow-list-action
+          
+      - name: Delete an allow list
+        uses: ./github-ip-allow-list-action
+        with:
+          github_token: ${{ secrets.goodcorp_enterprise_admin_token }}
+          enterprise_slug: goodcorp
+          match_cidr: ${{ github.event.inputs.match_cidr }}
+          match_description: ${{ github.event.inputs.match_description }}
