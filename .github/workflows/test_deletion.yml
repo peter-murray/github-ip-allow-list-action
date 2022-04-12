@@ -23,7 +23,7 @@ jobs:
           path: github-ip-allow-list-action
           
       - name: Delete an allow list
-        uses: ./github-ip-allow-list-action
+        uses: ./github-ip-allow-list-action/delete-allow-lists
         with:
           github_token: ${{ secrets.goodcorp_enterprise_admin_token }}
           enterprise_slug: goodcorp
