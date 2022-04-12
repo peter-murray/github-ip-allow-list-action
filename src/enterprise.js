@@ -156,6 +156,33 @@ class Enterprise {
   }
 }
 
+async function deleteIpAllowListEntry(octokit, id) {
+  core.info(`Deleting existing allow list entry: ${id}}`);
+  const ipAllowList = await octokit.graphql({
+    query: `
+            mutation deleteAllowList($id: String!) {
+                deleteIpAllowListEntry(input: {
+                    id: $id
+                }) {
+                    clientMutationId
+                    ipAllowListEntry {
+                        allowListValue
+                        createdAt
+                        updatedAt
+                        isActive
+                        name
+                        owner {
+                            __typename
+                        }
+                    }
+                }
+            }
+            `,
+    id: id,
+  });
+  return new IPAllowListEntry(ipAllowList);
+}
+
 async function updateIpAllowList(octokit, id, name, cidr, isActive) {
   core.info(`Updating existing allow list entry: ${cidr}; existing id: ${id}; description: ${name}; active: ${isActive}`);
   const ipAllowList = await octokit.graphql({

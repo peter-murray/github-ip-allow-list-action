@@ -1,0 +1,35 @@
+---
+name: GitHub clear IP Allow List Action
+description: Removes all IP Allow Lists that match the specified filter
+author: peter-murray
+
+branding:
+  icon: alert-circle
+  color: blue
+
+inputs:
+  github_token:
+    description: The GitHub token that can be used to update the allow list on the enterprise account
+    required: true
+
+  enterprise_slug:
+    description: The GitHub Enterprise account slug
+    required: true
+
+  match_description:
+    description: IP Allow List description pattern to match and remove
+    required: false
+
+  match_cidr:
+    description: IP Allow List CIDRs to match and remove
+    required: false
+
+  remove_all:
+    description: Flag for indicating that all IP Allow List entries should be removed
+    default: false
+    type: boolean
+    required: false
+
+runs:
+  using: node12
+  main: dist/delete-allow-lists/index.js

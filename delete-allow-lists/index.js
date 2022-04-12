@@ -10,34 +10,38 @@ function getRequiredInputValue(key) {
 async function run() {
   try {
     const githubToken = getRequiredInputValue('github_token')
-      , metadataSection = core.getInput('metadata_section')
-      , customCidrs = core.getInput('custom_cidrs')
       , enterpriseSlug = getRequiredInputValue('enterprise_slug')
-      , isActive = core.getInput('active') === 'true'
+      , matchDescription = core.getInput('match_description')
+      , matchCidr = core.getInput('match_cidr')
       ;
 
     const octokit = githubClient.create(githubToken);
     const targetEnterprise = await enterprise.getEnterprise(enterpriseSlug, octokit);
     core.info(`Enterprise account: ${targetEnterprise.name} : ${targetEnterprise.url}`);
 
-    if (!metadataSection && !customCidrs) {
-      throw new Error('A set of custom CIDRS or GitHub meta CIDRs section must be specified.');
+    if (!matchDescription && !matchCidr) {
+      throw new Error('A filter of the description or cidrs must be specified.');
     }
 
-    if (metadataSection) {
-      const cidrs = await getMetaCIDRs(octokit, metadataSection);
-      if (cidrs) {
-        core.info(`GitHub meta CIDRs to add: ${JSON.stringify(cidrs)}`);
-        await addCidrsToEnterprise(targetEnterprise, cidrs, isActive, `GitHub Meta CIDR for ${metadataSection}`);
-      } else {
-        throw new Error(`The metadata CIDRs for '${metadataSection}' were unable to be resolved.`);
-      }
+    const allAllowLists = await enterprise.getEnterpriseIpAllowListEntries();
+
+    const toRemove = [];
+    if (matchDescription) {
+      allAllowLists.forEach(allowListEntry => {
+        if (allAllowListEntry.name === matchDescription) {
+          toRemove.push(allowListEntry);
+        }
+      })
     }
 
-    if (customCidrs) {
-      const cidrs = getCidrs(customCidrs);
-      core.info(`Custom CIDRs to add: ${JSON.stringify(cidrs)}`);
-      await addCidrsToEnterprise(targetEnterprise, cidrs, isActive, core.getInput('custom_cidrs_label'));
+    if (matchCidr) {
+      //TODO
+    }
+
+    if (toRemove.length > 0) {
+      await enterprise.deleteIpAllowLists(toRemove.map(allowList => allowList.id));
+    } else {
+      core.info(`No matches found in existing IP Allow List Entries`);
     }
   } catch (err) {
     core.setFailed(err);
@@ -47,7 +51,7 @@ async function run() {
 run();
 
 async function addCidrsToEnterprise(enterprise, cidrs, isActive, label) {
-  core.startGroup(`Building IP Allow List Entries: ${label}`);
+  core.startGroup(`Modifying IP Allow List Entries: ${label}`);
   await enterprise.addAllowListCIDRs(label, cidrs, isActive);
   core.endGroup();
 }

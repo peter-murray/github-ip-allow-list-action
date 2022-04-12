@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build index.js"
+    "build-add": "ncc build add-allow-lists/index.js",
+    "build-delete": "ncc build delete-allow-lists/index.js -o dist/delete-allow-lists",
+    "build": "npm run build-add && npm run build-delete"
   },
   "repository": {
     "type": "git",
