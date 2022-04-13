@@ -20,7 +20,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: update-changes
-          path: github-ip-allow-list-action
+          path: ./github-ip-allow-list-action
+          
+      - name: Show files
+        run: ls -la
           
       - name: Delete an allow list
         uses: ./github-ip-allow-list-action/delete-allow-lists
