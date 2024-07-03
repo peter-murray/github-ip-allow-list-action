@@ -20,7 +20,7 @@ on:
 jobs:
   update_allow_list:
     name: Update Enterprise IP Allow List
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     
     steps:
       - name: Mask Token
@@ -28,7 +28,7 @@ jobs:
           echo "::add-mask::${{ github.event.inputs.token }}"
     
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         
       - name: Update IP Allow List
         uses: ./
