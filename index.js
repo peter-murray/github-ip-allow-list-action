@@ -13,7 +13,7 @@ async function run() {
       , metadataSection = core.getInput('metadata_section')
       , customCidrs = core.getInput('custom_cidrs')
       , enterpriseSlug = getRequiredInputValue('enterprise_slug')
-      , isActive = core.getInput('active') === 'true'
+      , isActive = core.getBooleanInput('active')
       ;
 
     const octokit = githubClient.create(githubToken);
